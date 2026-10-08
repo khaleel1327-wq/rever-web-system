@@ -32,7 +32,7 @@ id: 'auto',
     title: 'Car Interior Detailing',
     description: 'Deep steam extraction, upholstery stain removal, leather conditioning, and interior cabin sanitization.',
     mediaType: 'video',
-    mediaSrc: '/videos/tropikleen_int1.mp4',
+    mediaSrc: '/videos/tropiKleen_int1.mp4',
     highlights: ['Steam Cleaning & Extraction', 'Odor Neutralization', 'Dashboard & Trim UV Care'],
   },
   {
