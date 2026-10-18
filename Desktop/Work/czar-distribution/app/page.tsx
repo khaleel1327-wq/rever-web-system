@@ -154,7 +154,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* FEATURED SLIDESHOW */}
       <section id="featured" className="py-10 px-4 max-w-7xl mx-auto mt-6">
         <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 h-72 md:h-80 flex items-center justify-center text-center p-6 text-white shadow-2xl shadow-black">
           <div className={`absolute inset-0 bg-gradient-to-r ${SLIDES[currentSlide].bg} transition-all duration-700 ease-in-out`} />
@@ -389,13 +388,12 @@ export default function Home() {
 
         </div>
 
-        {/* Bottom Copyright */}
+       {/* Bottom Copyright */}
         <div className="pt-8 border-t border-slate-800 text-center">
           <p className="text-slate-500 text-xs">
-            © {new Date().getFullYear()} Czar Distributions Ltd. All Rights Reserved.
+            © 2026 Czar Distributions Ltd. All Rights Reserved.
           </p>
         </div>
-      </footer>
 
       {/* Developer Tag */}
       <div className="mt-6 flex items-center justify-center">
@@ -406,6 +404,8 @@ export default function Home() {
           </span>
         </div>
       </div>
+    </footer>
+
     </div>
 
   );
