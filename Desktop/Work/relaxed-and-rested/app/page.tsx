@@ -3,6 +3,36 @@
 import Image from 'next/image';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
+type IconProps = { className?: string; strokeWidth?: number };
+
+function CalendarCheck({ className, strokeWidth = 2 }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 2v4m8-4v4M3 10h18" />
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="m9 16 2 2 4-4" />
+    </svg>
+  );
+}
+
+function Gift({ className, strokeWidth = 2 }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="8" width="18" height="13" rx="2" />
+      <path d="M12 8v13M3 12h18M12 8H7.5a2.5 2.5 0 1 1 2.5-2.5V8Zm0 0h4.5a2.5 2.5 0 1 0-2.5-2.5V8Z" />
+    </svg>
+  );
+}
+
+function Users({ className, strokeWidth = 2 }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m16 0v-2a4 4 0 0 0-3-3.87M14 3.13a4 4 0 0 1 0 7.75" />
+      <circle cx="10" cy="7" r="4" />
+    </svg>
+  );
+}
+
 // Exact Price List from Relaxed & Rested Menus
 const PRICE_LIST = [
   {
@@ -721,12 +751,19 @@ export default function RelaxedAndRestedPage() {
             </div>
 
             {/* Policy Details */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-white mb-3">Booking Policies</h4>
-              <p className="text-xs text-gray-400">📌 Deposit required to secure all appointments</p>
-              <p className="text-xs text-gray-400">🎁 Book 4 sessions & get 1 free</p>
-              <p className="text-xs text-gray-400">🤝 Refer a client for 10% off your next service</p>
-            </div>
+            <div className="space-y-3">
+  <h4 className="text-xs font-semibold uppercase tracking-widest text-white mb-3">Booking Policies</h4>
+  {[
+    { icon: CalendarCheck, text: 'Deposit required to secure all appointments' },
+    { icon: Gift, text: 'Book 4 sessions & get 1 free' },
+    { icon: Users, text: 'Refer a client for 10% off your next service' },
+  ].map(({ icon: Icon, text }) => (
+    <p key={text} className="flex items-start gap-2.5 text-xs text-gray-400 text-left justify-center md:justify-start">
+      <Icon className="w-4 h-4 text-[#C19A6B] shrink-0 mt-px" strokeWidth={1.75} />
+      <span>{text}</span>
+    </p>
+  ))}
+</div>
 
             {/* Social Links */}
             <div className="space-y-2">
