@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { CSSProperties, FormEvent, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useRef, useState } from 'react';
+import { CSSProperties, FormEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { siteConfig as C, themes, type IconName } from '../site.config';
 
 const ICON_PATHS: Record<IconName, ReactNode> = {
@@ -602,6 +602,10 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
   );
 }
 
+type StatItem = { label: string; value: string };
+type FaqEntry = { q: string; a: string };
+type MenuItemConfig = { name: string; price: number; note?: string; description?: string };
+
 export default function SpaTemplatePage() {
   const firstService = C.menu?.[0]?.items?.[0];
   const serviceLabel = (name: string, price: number) => `${name} (${C.currency.symbol}${price})`;
@@ -688,10 +692,15 @@ export default function SpaTemplatePage() {
   const themeVars = { '--accent': colors.accent, '--gold': colors.gold } as CSSProperties;
   const offers = C.offers ?? [];
   const aboutParagraphs: string[] = (C.about as { paragraphs?: string[] })?.paragraphs ?? [];
-const aboutStats: { label: string; value: string }[] =
-  (C.about as { stats?: { label: string; value: string }[] })?.stats ?? [];
+  const rawStats = (C.about as { stats?: unknown })?.stats;
+  const aboutStats: StatItem[] = Array.isArray(rawStats) ? (rawStats as StatItem[]) : [];
   const gallery = C.gallery ?? [];
-  const faq = C.faq ?? [];
+  const faqConfig = C.faq as unknown as FaqEntry[] | { eyebrow?: string; title?: string; items?: FaqEntry[] } | undefined;
+  const faqItems: FaqEntry[] = Array.isArray(faqConfig)
+    ? faqConfig
+    : Array.isArray(faqConfig?.items)
+      ? faqConfig.items
+      : [];
   const hasContact = C.contact.instagram || C.contact.phone || C.contact.email || C.contact.address;
 
   return (
@@ -844,6 +853,9 @@ const aboutStats: { label: string; value: string }[] =
             </Reveal>
 
             <Reveal delay={120}>
+              <span className="t-accent text-xs uppercase tracking-widest font-semibold">
+                {'eyebrow' in C.about && typeof C.about.eyebrow === 'string' ? C.about.eyebrow : 'About Us'}
+              </span>
               <h2 className="font-display text-3xl md:text-4xl text-white mt-1 mb-4">
                 {'title' in C.about && typeof C.about.title === 'string' ? C.about.title : 'About Us'}
               </h2>
@@ -857,7 +869,7 @@ const aboutStats: { label: string; value: string }[] =
               </div>
               {aboutStats.length > 0 && (
                 <div className="flex flex-wrap gap-x-10 gap-y-6 mt-8">
-                  {aboutStats.map((st: { label: boolean | Key | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; value: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }) => (
+                  {aboutStats.map((st) => (
                     <div key={st.label}>
                       <p className="font-display t-gold text-3xl">{st.value}</p>
                       <p className="text-xs uppercase tracking-widest text-gray-400 mt-1">{st.label}</p>
@@ -887,20 +899,26 @@ const aboutStats: { label: string; value: string }[] =
               <Reveal key={group.category} delay={gIdx * 80} className="liquid-glass rounded-3xl p-6 md:p-8">
                 <h3 className="font-display text-2xl t-gold mb-5">{group.category}</h3>
                 <div className="space-y-3">
-                  {(group.items ?? []).map((item, iIdx) => (
-                    <div
-                      key={item.name}
-                      className={`menu-row ${iIdx % 2 === 0 ? 'row-a' : 'row-b'} rounded-2xl px-4 py-3.5 flex items-baseline justify-between gap-4`}
-                    >
-                      <div>
-                        <p className="font-medium text-white text-sm md:text-base">{item.name}</p>
-                        {item.note && <p className="text-gray-400 text-xs mt-0.5">{item.note}</p>}
+                  {(group.items ?? []).map((item, iIdx) => {
+                    const menuItem = item as MenuItemConfig;
+                    const subtitle = menuItem.note ?? menuItem.description;
+                    return (
+                      <div
+                        key={menuItem.name}
+                        className={`menu-row ${
+                          iIdx % 2 === 0 ? 'row-a' : 'row-b'
+                        } rounded-2xl px-4 py-3.5 flex items-baseline justify-between gap-4`}
+                      >
+                        <div>
+                          <p className="font-medium text-white text-sm md:text-base">{menuItem.name}</p>
+                          {subtitle && <p className="text-gray-400 text-xs mt-0.5">{subtitle}</p>}
+                        </div>
+                        <span className="font-semibold t-accent text-sm md:text-base shrink-0">
+                          {formatPrice(menuItem.price)}
+                        </span>
                       </div>
-                      <span className="font-semibold t-accent text-sm md:text-base shrink-0">
-                        {formatPrice(item.price)}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Reveal>
             ))}
@@ -920,15 +938,8 @@ const aboutStats: { label: string; value: string }[] =
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[210px] md:auto-rows-[250px]">
               {gallery.map((img, idx) => (
-                <div
-                  key={img.src}
-                  className={idx === 0 ? 'col-span-2 md:col-span-2 row-span-1' : 'col-span-1'}
-                >
-                  <GalleryTile
-                    src={img.src}
-                    alt={img.alt}
-                    onOpen={(src, alt) => setLightbox({ src, alt })}
-                  />
+                <div key={img.src} className={idx === 0 ? 'col-span-2 md:col-span-2 row-span-1' : 'col-span-1'}>
+                  <GalleryTile src={img.src} alt={img.alt} onOpen={(src, alt) => setLightbox({ src, alt })} />
                 </div>
               ))}
             </div>
@@ -1056,17 +1067,21 @@ const aboutStats: { label: string; value: string }[] =
       </section>
 
       {/* FAQ */}
-      {C.sections?.faq && faq.length > 0 && (
+      {C.sections?.faq && faqItems.length > 0 && (
         <section id="faq" className="py-20 px-6">
           <div className="max-w-3xl mx-auto">
             <Reveal className="text-center mb-10">
-              <span className="t-accent text-xs uppercase tracking-widest font-semibold">Good to Know</span>
-              <h2 className="font-display text-3xl md:text-4xl text-white mt-1">Frequently Asked Questions</h2>
+              <span className="t-accent text-xs uppercase tracking-widest font-semibold">
+                {!Array.isArray(faqConfig) && faqConfig?.eyebrow ? faqConfig.eyebrow : 'Good to Know'}
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl text-white mt-1">
+                {!Array.isArray(faqConfig) && faqConfig?.title ? faqConfig.title : 'Frequently Asked Questions'}
+              </h2>
               <div className="title-bar gold-bar h-0.5 mx-auto mt-3" />
             </Reveal>
 
             <div className="space-y-3">
-              {faq.map((item, idx) => {
+              {faqItems.map((item, idx) => {
                 const isOpen = openFaq === idx;
                 return (
                   <div key={item.q} className={`faq-item rounded-2xl overflow-hidden ${isOpen ? 'open' : ''}`}>
