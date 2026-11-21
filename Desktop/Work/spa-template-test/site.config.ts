@@ -48,7 +48,7 @@ export const siteConfig = {
   // ── Images ─────────────────────────────────────────────────
   // Put photos in /public/images using the file names below and they appear automatically.
   // Any image that is missing shows a tidy placeholder instead of a broken picture.
-  heroImage: '/images/hero.jpg', // wide photo behind the headline ('' for no background photo)
+  heroImage: '/images/spa1.avif', // wide photo behind the headline ('' for no background photo)
 
   // ── Contact & booking ──────────────────────────────────────
   // Bookings are sent to this WhatsApp number. Digits only, with country code, no + or spaces.
@@ -96,13 +96,7 @@ export const siteConfig = {
 },
   // ── Gallery ────────────────────────────────────────────────
   // 6 photos fill the layout best. Add or remove entries freely.
-  // Inside site.config.ts
-heroImage: '/images/spa1.avif',
-about: {
-  // ...existing fields
-  image: '/images/spa2.avif',
-},
-gallery: [
+  gallery: [
   { src: '/images/spa3.jpg', alt: 'Luxury spa treatment room' },
   { src: '/images/spa4.jpg', alt: 'Relaxing pedicure and body therapy' },
   { src: '/images/spa5.jpg', alt: 'Serene wellness lounge' },

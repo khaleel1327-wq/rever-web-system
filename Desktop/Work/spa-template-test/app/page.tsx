@@ -687,8 +687,9 @@ export default function SpaTemplatePage() {
   const colors = C.theme === 'custom' ? C.customColors : themes[C.theme];
   const themeVars = { '--accent': colors.accent, '--gold': colors.gold } as CSSProperties;
   const offers = C.offers ?? [];
-  const aboutParagraphs = (C.about as { paragraphs?: string[] } | undefined)?.paragraphs ?? [];
-  const aboutStats = C.about?.stats ?? [];
+  const aboutParagraphs: string[] = (C.about as { paragraphs?: string[] })?.paragraphs ?? [];
+const aboutStats: { label: string; value: string }[] =
+  (C.about as { stats?: { label: string; value: string }[] })?.stats ?? [];
   const gallery = C.gallery ?? [];
   const faq = C.faq ?? [];
   const hasContact = C.contact.instagram || C.contact.phone || C.contact.email || C.contact.address;
